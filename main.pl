@@ -7,12 +7,38 @@ sub delay {
 	$s;
 }
 
-my $force = sub {
-	(shift)->();
+my $ref = sub {
+	my $r = shift;
+	if (ref $r) {
+		ref $r;
+	}
 };
 
-my $ref = sub {
-	ref shift;
+my $isCode = sub {
+	my $r = shift;
+	if (ref $r && $r->$ref() eq 'CODE') {
+		1;
+	}
+	else {
+		0;
+	}
+};
+
+my $isArray = sub {
+	my $r = shift;
+	if (ref $r && $r->$ref() eq 'ARRAY') {
+		1;
+	}
+	else {
+		0;
+	}
+};
+
+my $force = sub {
+	my $c = shift;
+	if ($c->$isCode()) {
+		$c->();
+	}
 };
 
 my $s = sub { 1 };
@@ -40,7 +66,10 @@ my $defined = sub {
 };
 
 my $head = sub {
-	(shift)->[0];
+	my $r = shift;
+	if ($r->$isArray()) {
+		$r->[0];
+	}
 };
 
 my $isNot = sub {
@@ -49,14 +78,9 @@ my $isNot = sub {
 
 my $tail = sub {
 	my $s = shift;
-	if ($s->$defined()->$isNot()) {
-		say __LINE__ . ' error: ' . Dumper($s);
+	if ($s->$isArray()) {
+		$s->[1];
 	}
-	
-	elsif ($s->$ref() != 'ARRAY') {
-		say __LINE__ . ' error: ' . Dumper($s);
-	}
-	($s)->[1];
 };
 
 
@@ -67,20 +91,19 @@ my $derefArray = sub {
 sub take {
 	my $n = shift;
 	my $s = shift;
-		say '$s:1' . Dumper($s);
-	
+		#say '$s:1' . Dumper($s);
 	if ($n == 0) {
 		[];
 	}
-	elsif (!($s->$tail()->$force()->$defined())) {
-		[$s->$head()];
+	elsif ($s->$isCode()) {
+		[];
 	}
 	else {
-		say '$s:' . Dumper($s);
-		my $head = $s->$head();
-		my $tail = $s->$tail();
-		#say Dumper($tail);
-		[$head, take($n - 1, $tail)->$derefArray()];
+		#say '$s:' . Dumper($s);
+		my $h = $s->$head();
+		my $t = $s->$tail();
+		say Dumper($h);
+		[$h, take($n - 1, $t->$force())->$derefArray()];
 	}
 }
 
@@ -91,6 +114,7 @@ my @a = (0..9);
 my $s = ofArray(@a);
 
 say Dumper($s);
+say $s->$tail()->$ref();
 
 my $t = take(5, $s);
 say Dumper($t);
