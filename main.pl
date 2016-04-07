@@ -11,6 +11,10 @@ my $force = sub {
 	(shift)->();
 };
 
+my $ref = sub {
+	ref shift;
+};
+
 my $s = sub { 1 };
 #say force($s);#測試force
 
@@ -67,7 +71,6 @@ my $s = ofArray(@a);
 say Dumper($s);
 
 my $t = take(5, $s);
-say Dumper($t);
-my $c = sub { 1 };
-say $c->$force();
+say Dumper($s);
+say $s->$ref();
 #say @{$t};
