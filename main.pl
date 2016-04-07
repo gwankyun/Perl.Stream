@@ -14,8 +14,26 @@ sub force {
 my $s = sub { 1 };
 #say force($s);#測試force
 
+sub ofArray {
+	my @a = @_;
+	if (@a == 0) {
+		undef;
+	}
+	elsif (@a == 1) {
+		my $first = $a[0];
+		[$first, delay];
+	}
+	else {
+		my $last = $#a;
+		my $first = $a[0];
+		my @tail = @a[1..$last];
+		[$first, ofArray(@tail)];
+	}
+}
+
 sub take {
-	my ($n, $s) = @_;
+	my $n = shift;
+	my $s = shift;
 	if ($n == 0) {
 		undef;
 	}
@@ -29,5 +47,12 @@ sub take {
 	}
 }
 
-my $a = [0..9];
-say @{$a}[2..5];
+my @a = (0..9);
+
+#say ref($a);
+
+my $s = ofArray(@a);
+
+my $t = take(5, $s);
+
+say @{$t};
