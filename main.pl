@@ -44,22 +44,28 @@ my $force = sub {
 my $s = sub { 1 };
 #say force($s);#測試force
 
-sub ofArray {
-	my @a = @_;
-	if (@a == 0) {
+my $derefArray = sub {
+	@{(shift)};
+};
+
+my $ofArray;
+$ofArray = sub {
+	my $a = shift;
+	if ($a->$derefArray() == 0) {
 		undef;
 	}
-	elsif (@a == 1) {
-		my $first = $a[0];
+	elsif ($a->$derefArray() == 1) {
+		my $first = $a->[0];
 		[$first, delay(sub { undef })];
 	}
 	else {
-		my $last = $#a;
-		my $first = $a[0];
-		my @tail = @a[1..$last];
-		[$first, delay(sub { ofArray(@tail) })];
+		my @ar = $a->$derefArray();
+		my $last = $#ar;
+		my $first = $ar[0];
+		my @tail = @ar[1..$last];
+		[$first, delay(sub { [@tail]->$ofArray() })];
 	}
-}
+};
 
 my $defined = sub {
 	defined shift;
@@ -84,13 +90,12 @@ my $tail = sub {
 };
 
 
-my $derefArray = sub {
-	@{(shift)};
-};
 
-sub take {
-	my $n = shift;
+
+my $take;
+$take = sub {
 	my $s = shift;
+	my $n = shift;
 		#say '$s:1' . Dumper($s);
 	if ($n == 0) {
 		[];
@@ -99,24 +104,23 @@ sub take {
 		[];
 	}
 	else {
-		#say '$s:' . Dumper($s);
 		my $h = $s->$head();
 		my $t = $s->$tail();
 		say Dumper($h);
-		[$h, take($n - 1, $t->$force())->$derefArray()];
+		[$h, $take->($t->$force(), $n - 1)->$derefArray()];
 	}
-}
+};
 
 my @a = (0..9);
 
 #say ref($a);
 
-my $s = ofArray(@a);
+my $s = [0..9]->$ofArray();
 
 say Dumper($s);
 say $s->$tail()->$ref();
 
-my $t = take(5, $s);
+my $t = $s->$take(5);
 say Dumper($t);
 #say $s->$ref();
 #say @{$t};
