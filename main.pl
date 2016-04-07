@@ -37,12 +37,11 @@ sub ofArray {
 
 my $head = sub {
 	($shift)->[0];
-}
+};
 
-sub tail {
-	my $s = shift;
-	$s->[0];
-}
+my $tail = sub {
+	($shift)->[1];
+};
 
 sub take {
 	my $n = shift;
