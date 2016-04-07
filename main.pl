@@ -36,15 +36,15 @@ sub ofArray {
 }
 
 my $head = sub {
-	($shift)->[0];
+	(shift)->[0];
 };
 
 my $tail = sub {
-	($shift)->[1];
+	(shift)->[1];
 };
 
-my $derefAarray = sub {
-	@{($shift)};
+my $derefArray = sub {
+	@{(shift)};
 };
 
 sub take {
@@ -59,7 +59,7 @@ sub take {
 	else {
 		my $head = $s->$head();
 		my $tail = $s->$tail();
-		[$head, take($n - 1, $tail)];
+		[$head, take($n - 1, $tail)->$derefArray()];
 	}
 }
 
@@ -72,6 +72,6 @@ my $s = ofArray(@a);
 say Dumper($s);
 
 my $t = take(5, $s);
-say Dumper($s);
+say Dumper($t);
 say $s->$ref();
 #say @{$t};
