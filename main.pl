@@ -28,8 +28,13 @@ sub ofArray {
 		my $last = $#a;
 		my $first = $a[0];
 		my @tail = @a[1..$last];
-		[$first, ofArray(@tail)];
+		[$first, delay(sub { ofArray(@tail) })];
 	}
+}
+
+sub head {
+	my $s = shift;
+	$s->[0];
 }
 
 sub take {
