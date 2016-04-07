@@ -7,10 +7,9 @@ sub delay {
 	$s;
 }
 
-sub force {
-	my $s = shift;
-	$s->();
-}
+my $force = sub {
+	(shift)->();
+};
 
 my $s = sub { 1 };
 #say force($s);#測試force
@@ -37,6 +36,7 @@ sub head {
 	$s->[0];
 }
 
+
 sub tail {
 	my $s = shift;
 	$s->[0];
@@ -48,13 +48,13 @@ sub take {
 	if ($n == 0) {
 		undef;
 	}
-	elsif (defined $s) {
+	elsif (ref tail($s) == 'CODE') {
 		undef;
 	}
 	else {
-		my $first = $s->[0];
-		my $tail = $s->[1];
-		[$first, take($n - 1, $tail)];
+		my $head = head $s;
+		my $tail = tail $s;
+		[$head, take($n - 1, $tail)];
 	}
 }
 
@@ -66,6 +66,8 @@ my $s = ofArray(@a);
 
 say Dumper($s);
 
-#my $t = take(5, $s);
-
+my $t = take(5, $s);
+say Dumper($t);
+my $c = sub { 1 };
+say $c->$force();
 #say @{$t};
