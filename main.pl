@@ -1,5 +1,6 @@
 #! /usr/bin/perl
 use 5.022;
+use Data::Dumper;
 
 sub delay {
 	my $s = shift;
@@ -21,7 +22,7 @@ sub ofArray {
 	}
 	elsif (@a == 1) {
 		my $first = $a[0];
-		[$first, delay];
+		[$first, delay(sub { undef })];
 	}
 	else {
 		my $last = $#a;
@@ -53,6 +54,8 @@ my @a = (0..9);
 
 my $s = ofArray(@a);
 
-my $t = take(5, $s);
+say Dumper($s);
 
-say @{$t};
+#my $t = take(5, $s);
+
+#say @{$t};
