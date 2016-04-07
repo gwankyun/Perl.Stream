@@ -43,6 +43,10 @@ my $tail = sub {
 	($shift)->[1];
 };
 
+my $derefAarray = sub {
+	@{($shift)};
+};
+
 sub take {
 	my $n = shift;
 	my $s = shift;
