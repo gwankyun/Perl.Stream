@@ -35,11 +35,9 @@ sub ofArray {
 	}
 }
 
-sub head {
-	my $s = shift;
-	$s->[0];
+my $head = sub {
+	($shift)->[0];
 }
-
 
 sub tail {
 	my $s = shift;
