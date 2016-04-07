@@ -43,6 +43,10 @@ my $tail = sub {
 	(shift)->[1];
 };
 
+my $defined = sub {
+	defined shift;
+};
+
 my $derefArray = sub {
 	@{(shift)};
 };
@@ -51,14 +55,15 @@ sub take {
 	my $n = shift;
 	my $s = shift;
 	if ($n == 0) {
-		undef;
+		[];
 	}
-	elsif ($s->$tail()->$ref() == 'CODE') {
-		undef;
+	elsif (!(defined $s->$tail()->$ref()->$force())) {
+		[$s->$head()];
 	}
 	else {
 		my $head = $s->$head();
 		my $tail = $s->$tail();
+		say Dumper($tail);
 		[$head, take($n - 1, $tail)->$derefArray()];
 	}
 }
@@ -73,5 +78,5 @@ say Dumper($s);
 
 my $t = take(5, $s);
 say Dumper($t);
-say $s->$ref();
+#say $s->$ref();
 #say @{$t};
