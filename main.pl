@@ -35,17 +35,30 @@ sub ofArray {
 	}
 }
 
+my $defined = sub {
+	defined shift;
+};
+
 my $head = sub {
 	(shift)->[0];
 };
 
-my $tail = sub {
-	(shift)->[1];
+my $isNot = sub {
+	!shift;
 };
 
-my $defined = sub {
-	defined shift;
+my $tail = sub {
+	my $s = shift;
+	if ($s->$defined()->$isNot()) {
+		say __LINE__ . ' error: ' . Dumper($s);
+	}
+	
+	elsif ($s->$ref() != 'ARRAY') {
+		say __LINE__ . ' error: ' . Dumper($s);
+	}
+	($s)->[1];
 };
+
 
 my $derefArray = sub {
 	@{(shift)};
@@ -54,16 +67,19 @@ my $derefArray = sub {
 sub take {
 	my $n = shift;
 	my $s = shift;
+		say '$s:1' . Dumper($s);
+	
 	if ($n == 0) {
 		[];
 	}
-	elsif (!(defined $s->$tail()->$ref()->$force())) {
+	elsif (!($s->$tail()->$force()->$defined())) {
 		[$s->$head()];
 	}
 	else {
+		say '$s:' . Dumper($s);
 		my $head = $s->$head();
 		my $tail = $s->$tail();
-		say Dumper($tail);
+		#say Dumper($tail);
 		[$head, take($n - 1, $tail)->$derefArray()];
 	}
 }
