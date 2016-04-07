@@ -37,6 +37,11 @@ sub head {
 	$s->[0];
 }
 
+sub tail {
+	my $s = shift;
+	$s->[0];
+}
+
 sub take {
 	my $n = shift;
 	my $s = shift;
