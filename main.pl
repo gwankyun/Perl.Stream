@@ -49,12 +49,12 @@ sub take {
 	if ($n == 0) {
 		undef;
 	}
-	elsif (ref tail($s) == 'CODE') {
+	elsif ($s->$tail()->$ref() == 'CODE') {
 		undef;
 	}
 	else {
-		my $head = head $s;
-		my $tail = tail $s;
+		my $head = $s->$head();
+		my $tail = $s->$tail();
 		[$head, take($n - 1, $tail)];
 	}
 }
